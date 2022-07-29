@@ -1,4 +1,5 @@
 using alunos.Data;
+using alunos.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ namespace alunos
             {
                 options.UseNpgsql(Configuration.GetConnectionString("Default"));
             });
+            services.AddScoped<IAlunoRepository, AlunoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
