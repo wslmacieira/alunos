@@ -1,5 +1,6 @@
 using alunos.Data;
 using alunos.Repository;
+using alunos.Repository.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using alunos.Model;
 using alunos.Repository;
+using alunos.Repository.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace alunos.Controllers
@@ -12,6 +14,8 @@ namespace alunos.Controllers
     public class AlunoController : ControllerBase
     {
         private readonly IAlunoRepository _repository;
+        private readonly AlunoService _alunoService = new AlunoService();
+
 
         public AlunoController(IAlunoRepository repository)
         {
@@ -30,18 +34,31 @@ namespace alunos.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            var count = await _repository.TotalDeMatriculas();
+            var matriculas = await _alunoService.AdicionaNovosAlunos(count + 1);
+            await _repository.AdicionaMatriculas(matriculas);
             var alunos = await _repository.ListarAlunos();
+
             return alunos.Any()
                 ? Ok(alunos)
                 : NoContent();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> BuscaPorId(int id)
         {
             var aluno = await _repository.BuscaAluno(id);
             return aluno != null
                 ? Ok(aluno)
+                : NotFound("Aluno não encontrado");
+        }
+
+        [HttpGet("matriculas/{nome}")]
+        public async Task<IActionResult> BuscaPorNome(string nome)
+        {
+            var alunos = await _repository.BuscaMatriculasPorNome(nome);
+            return alunos.Any()
+                ? Ok(alunos)
                 : NotFound("Aluno não encontrado");
         }
 
@@ -74,5 +91,6 @@ namespace alunos.Controllers
                ? Ok("Aluno removido com sucesso")
                : BadRequest("Erro ao remover aluno");
         }
+
     }
 }

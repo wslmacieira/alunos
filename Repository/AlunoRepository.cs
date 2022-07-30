@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,15 @@ namespace alunos.Repository
             _context.Add(aluno);
         }
 
+        public async Task<bool> AdicionaMatriculas(List<Aluno> matriculas)
+        {
+            if (matriculas.Count > 0)
+            {
+                await _context.AddRangeAsync(matriculas);
+            }
+                return await _context.SaveChangesAsync() > 0;
+        }
+
         public void AtualizaAluno(Aluno aluno)
         {
             _context.Update(aluno);
@@ -29,6 +39,12 @@ namespace alunos.Repository
         {
             return await _context.Alunos.Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Aluno>> BuscaMatriculasPorNome(string nome)
+        {
+            return await _context.Alunos.Where(x => x.Nome == nome)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Aluno>> ListarAlunos()
@@ -44,6 +60,11 @@ namespace alunos.Repository
         public async Task<bool> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<int> TotalDeMatriculas()
+        {
+            return await _context.Alunos.CountAsync();
         }
     }
 }
