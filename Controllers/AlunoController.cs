@@ -43,9 +43,9 @@ namespace alunos.Controllers
         public async Task<IActionResult> CadastraNovosAlunos(int quantidade)
         {
             var matriculas = await _alunoService.BuscaNovosAlunos(quantidade);
-            // await _repository.AdicionaMatriculas(matriculas);
+            await _repository.AdicionaMatriculas(matriculas);
             return matriculas.Any()
-                ? Ok(quantidade)
+                ? Ok(matriculas)
                 : NoContent();
         }
 
@@ -60,7 +60,7 @@ namespace alunos.Controllers
                 : NotFound("Aluno não encontrado");
         }
 
-        
+
 
         [HttpPut("{id}")]
 

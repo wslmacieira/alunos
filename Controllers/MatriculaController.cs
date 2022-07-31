@@ -22,6 +22,7 @@ namespace alunos.Controllers
         public async Task<IActionResult> StartTask([FromBody] MatriculaTask request)
         {
             // await _repository.AdicionaMatriculas(matriculas);
+            if (request.tempo <= 0 || request.quantidade <= 0) return BadRequest("tempo ou quantidade deve ser maior que 0");
             _myBackgroundService.ConfiguraTask(request.tempo, request.quantidade);
             await _myBackgroundService.StartAsync(new System.Threading.CancellationToken());
             return Ok("Service start");
