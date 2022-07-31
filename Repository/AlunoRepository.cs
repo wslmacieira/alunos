@@ -49,7 +49,7 @@ namespace alunos.Repository
 
         public async Task<IEnumerable<Aluno>> ListarAlunos()
         {
-            return await _context.Alunos.ToListAsync();
+            return await _context.Alunos.OrderByDescending(x => x.Id).ToListAsync();
         }
 
         public void RemoveAluno(Aluno aluno)

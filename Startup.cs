@@ -1,6 +1,6 @@
 using alunos.Data;
 using alunos.Repository;
-using alunos.Repository.Service;
+using alunos.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,9 @@ namespace alunos
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            // services.AddHostedService<MatriculaBackgroundService>();
+            services.AddSingleton<HostedService, MatriculaBackgroundService>();
+            services.AddScoped<IAlunoRepository, AlunoRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -33,7 +35,6 @@ namespace alunos
             {
                 options.UseNpgsql(Configuration.GetConnectionString("Default"));
             });
-            services.AddScoped<IAlunoRepository, AlunoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,31 +9,28 @@ namespace alunos.Repository.Service
     public class AlunoService
     {
         private readonly HttpClient client = new HttpClient();
-
-        public async Task<List<Aluno>> AdicionaNovosAlunos(int count)
+        public async Task<List<Aluno>> BuscaNovosAlunos(int quantidade)
         {
             List<string> alunos = null;
-            string path = "https://gerador-nomes.herokuapp.com/nomes/5";
+            string path = $"https://gerador-nomes.herokuapp.com/nomes/{quantidade}";
             HttpResponseMessage response = await client.GetAsync(path);
             if (response.IsSuccessStatusCode)
             {
                 alunos = await response.Content.ReadAsAsync<List<string>>();
             }
-            List<Aluno> matriculas = new List<Aluno>();
+            List<Aluno> novosAlunos = new List<Aluno>();
             foreach (var nome in alunos)
             {
-                matriculas.Add(
+                novosAlunos.Add(
                     new Aluno()
                     {
-                        Id = count++,
                         Nome = nome,
                         DataNascimento = RandomDate()
                     }
                 );
             }
-            return matriculas;
+            return novosAlunos;
         }
-
         private static DateTime RandomDate()
         {
             Random random = new Random();
@@ -45,3 +42,4 @@ namespace alunos.Repository.Service
         }
     }
 }
+

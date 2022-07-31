@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using alunos.Model;
@@ -10,12 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace alunos.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class AlunoController : ControllerBase
     {
         private readonly IAlunoRepository _repository;
         private readonly AlunoService _alunoService = new AlunoService();
-
 
         public AlunoController(IAlunoRepository repository)
         {
@@ -23,7 +21,7 @@ namespace alunos.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Aluno aluno)
+        public async Task<IActionResult> CadastraAluno(Aluno aluno)
         {
             _repository.AdicionaAluno(aluno);
             return await _repository.SaveChangesAsync()
@@ -32,11 +30,8 @@ namespace alunos.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> ListaAlunos()
         {
-            var count = await _repository.TotalDeMatriculas();
-            var matriculas = await _alunoService.AdicionaNovosAlunos(count + 1);
-            await _repository.AdicionaMatriculas(matriculas);
             var alunos = await _repository.ListarAlunos();
 
             return alunos.Any()
@@ -44,8 +39,20 @@ namespace alunos.Controllers
                 : NoContent();
         }
 
+        [HttpPost("matriculas/{quantidade}")]
+        public async Task<IActionResult> CadastraNovosAlunos(int quantidade)
+        {
+            var matriculas = await _alunoService.BuscaNovosAlunos(quantidade);
+            // await _repository.AdicionaMatriculas(matriculas);
+            return matriculas.Any()
+                ? Ok(quantidade)
+                : NoContent();
+        }
+
+
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> BuscaPorId(int id)
+        public async Task<IActionResult> BuscaAlunoPorId(int id)
         {
             var aluno = await _repository.BuscaAluno(id);
             return aluno != null
@@ -53,18 +60,11 @@ namespace alunos.Controllers
                 : NotFound("Aluno não encontrado");
         }
 
-        [HttpGet("matriculas/{nome}")]
-        public async Task<IActionResult> BuscaPorNome(string nome)
-        {
-            var alunos = await _repository.BuscaMatriculasPorNome(nome);
-            return alunos.Any()
-                ? Ok(alunos)
-                : NotFound("Aluno não encontrado");
-        }
+        
 
         [HttpPut("{id}")]
 
-        public async Task<IActionResult> Put(int id, Aluno aluno)
+        public async Task<IActionResult> Atualiza(int id, Aluno aluno)
         {
             var alunoDb = await _repository.BuscaAluno(id);
             if (alunoDb == null) return NotFound("Aluno não encontrado");
@@ -81,7 +81,7 @@ namespace alunos.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Remove(int id)
         {
             var alunoDb = await _repository.BuscaAluno(id);
             if (alunoDb == null) return NotFound("Aluno não encontrado");
