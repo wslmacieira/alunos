@@ -24,7 +24,11 @@ namespace alunos.Controllers
         [SwaggerResponse(200, "Job iniciado")]
         public async Task<IActionResult> IniciaJob([FromBody] MatriculaTask request)
         {
-            if (request.tempo <= 0 || request.quantidade <= 0) return BadRequest("tempo ou quantidade deve ser maior que 0");
+            // Validação para limite de tempo e quantidade de matriculas para não extrapolar o banco de dados
+            if ((request.tempo < 5 || request.tempo > 86400) || (request.quantidade < 1 || request.quantidade > 100))
+            {
+                return BadRequest("tempo deve ser ente 5 a 86400 segundos e quantidade 1 a 100");
+            }
             _myBackgroundService.ConfiguraTask(request.tempo, request.quantidade);
             await _myBackgroundService.StartAsync(new System.Threading.CancellationToken());
             return Ok("Job iniciado");
