@@ -29,7 +29,13 @@ namespace alunos
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "alunos", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Matriculas Alunos",
+                    Version = "v1",
+                    Description = ".Net core api para gerenciamento matricula de alunos"
+                });
+                c.EnableAnnotations();
             });
             services.AddDbContext<AlunoContext>(options =>
             {

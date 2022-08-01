@@ -3,6 +3,7 @@ using alunos.Model;
 using alunos.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace alunos.Controllers
 {
@@ -19,21 +20,24 @@ namespace alunos.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> StartTask([FromBody] MatriculaTask request)
+        [SwaggerOperation("Inicia Job em Background para adicionar novas matriculas")]
+        [SwaggerResponse(200, "Job iniciado")]
+        public async Task<IActionResult> IniciaJob([FromBody] MatriculaTask request)
         {
-            // await _repository.AdicionaMatriculas(matriculas);
             if (request.tempo <= 0 || request.quantidade <= 0) return BadRequest("tempo ou quantidade deve ser maior que 0");
             _myBackgroundService.ConfiguraTask(request.tempo, request.quantidade);
             await _myBackgroundService.StartAsync(new System.Threading.CancellationToken());
-            return Ok("Service start");
+            return Ok("Job iniciado");
         }
 
         [HttpPost]
-        public async Task<IActionResult> StopTask()
+        [SwaggerOperation("Encerra Job em Background que adiciona novas matriculas")]
+        [SwaggerResponse(200, "Job finalizado")]
+        public async Task<IActionResult> FinalizaJob()
         {
             // await _repository.AdicionaMatriculas(matriculas);
             await _myBackgroundService.StopAsync(new System.Threading.CancellationToken());
-            return Ok("Service stop");
+            return Ok("Job finalizado");
         }
     }
 }
